@@ -1,0 +1,28 @@
+{
+    "name": "Inline Wiktionary Viewer",
+    "description": "View wiktionary in frame!",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": ["activeTab", "scripting", "contextMenus", "storage"],
+    "action": {
+        "default_popup": "dropdown.html",
+        "default_icon": {
+            "16": "/images/Wiktv3_16.png",
+            "32": "/images/Wiktv3_32.png",
+            "48": "/images/Wiktv3_48.png",
+            "128": "/images/Wiktv3_128.png"
+        }
+    },
+    "icons": {
+        "16": "/images/Wiktv3_16.png",
+        "32": "/images/Wiktv3_32.png",
+        "48": "/images/Wiktv3_48.png",
+        "128": "/images/Wiktv3_128.png"
+    },
+
+    "options_page": "options.html"
+
+}
