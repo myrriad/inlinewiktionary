@@ -122,7 +122,7 @@ function createIframe(word, lang) {
 
             this.style.left = (e.clientX - this.dragStartX) + 'px';
             this.style.top = (e.clientY - this.dragStartY) + 'px';
-            console.log('mousemove');
+            // console.log('mousemove');
 
 
         }.bind(div);
@@ -137,7 +137,7 @@ function createIframe(word, lang) {
             }
             document.removeEventListener('mousemove', mousemove);
             document.removeEventListener('mouseup', mouseup);
-            console.log('mouseup');
+            // console.log('mouseup');
 
 
 
@@ -156,7 +156,7 @@ function createIframe(word, lang) {
 
             document.addEventListener('mousemove', mousemove);
             document.addEventListener('mouseup', mouseup);
-            console.log('mousedown');
+            // console.log('mousedown');
 
 
 
