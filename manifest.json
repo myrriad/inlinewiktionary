@@ -1,6 +1,6 @@
 {
     "name": "Inline Wiktionary Viewer",
-    "description": "View wiktionary in frame!",
+    "description": "View wiktionary in frame! Note: pdfs are not supported.",
     "version": "1.0.0",
     "manifest_version": 3,
     "background": {

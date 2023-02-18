@@ -87,7 +87,16 @@ function createIframe(word, lang) {
         div.classList.add('inline-wiktionary');
 
         var X = document.createElement('span');
-        X.style.cssText = 'top:0;margin-right:10px; color: black; cursor: pointer; float:right;';
+        // X.style.cssText = '';
+        X.style.cssText = "font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;" +
+            "font - size: 16px; " +
+            "top: 0; " +
+            "margin - right: 10px; " +
+            "color: black; " +
+            "cursor: pointer; " +
+            "float: right; " +
+            "margin-right: 10px";
+        X.classList.add('inline-wiktionary-X');
         X.innerHTML = 'X';
         X.onclick = function() {
             iframe.parentNode.removeChild(iframe);
@@ -104,29 +113,56 @@ function createIframe(word, lang) {
         console.log('Inline Wiktionary loaded!');
         var mousemove = function(e) { // document mousemove
 
+            // cancel event if it was the X that was clicked
+            if (e.target.classList.contains('inline-wiktionary-X')) {
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            }
+
             this.style.left = (e.clientX - this.dragStartX) + 'px';
             this.style.top = (e.clientY - this.dragStartY) + 'px';
+            console.log('mousemove');
+
 
         }.bind(div);
 
         var mouseup = function(e) { // document mouseup
 
+            // cancel event if it was the X that was clicked
+            if (e.target.classList.contains('inline-wiktionary-X')) {
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            }
             document.removeEventListener('mousemove', mousemove);
             document.removeEventListener('mouseup', mouseup);
+            console.log('mouseup');
+
+
 
         }.bind(div);
 
         div.addEventListener('mousedown', function(e) { // element mousedown
 
+            // cancel event if it was the X that was clicked
+            if (e.target.classList.contains('inline-wiktionary-X')) {
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            }
             this.dragStartX = e.offsetX;
             this.dragStartY = e.offsetY;
 
             document.addEventListener('mousemove', mousemove);
             document.addEventListener('mouseup', mouseup);
+            console.log('mousedown');
+
+
 
         }.bind(div));
 
-        return word; //  + " " + iframe.src;
+        return word; //+" "+ iframe.src;
     }
 }
 chrome.runtime.onInstalled.addListener(() => {
@@ -144,27 +180,18 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.contextMenus.onClicked.addListener(
-    (info, tab) => {
+    async(info, tab) => {
         // console.log("we want to translate " + info.selectionText);
 
         if (tab.id === -1) {
             // we're in a pdf
-            console.log("pdf detected");
-            chrome.scripting.executeScript({
-                args: [info.selectionText, lang],
-                target: { tabId: tab.id },
-                func: createIframe,
-            }).then((results) => {
-                // console.log('Translate finished!');
-                // console.log(results ? 'returned: ' + results[0].result : "no result");
-            }).catch((error) => {
-                console.log("Promise error: " + error);
-            });
+            console.log("Pdfs are unsupported :(");
+
         } else {
             chrome.scripting.executeScript({
                 args: [info.selectionText, lang],
                 target: { tabId: tab.id },
-                func: createIframe,
+                func: createIframe
             }).then((results) => {
                 // console.log('Translate finished!');
                 // console.log(results ? 'returned: ' + results[0].result : "no result");
