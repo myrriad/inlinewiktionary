@@ -19,43 +19,43 @@
 let color = '#3aa757';
 
 // https://stackoverflow.com/questions/8569095/draggable-div-without-jquery-ui
-function registerDraggable() {
-    var news = document.getElementsByClassName('inline-wiktionary-new');
-    console.log('reg drag');
-    for (var self of news) {
-        var mousemove = function(e) { // document mousemove
+// function registerDraggable() {
+//     var news = document.getElementsByClassName('inline-wiktionary-new');
+//     console.log('reg drag');
+//     for (var self of news) {
+//         var mousemove = function(e) { // document mousemove
 
-            this.style.left = (e.clientX - this.dragStartX) + 'px';
-            this.style.top = (e.clientY - this.dragStartY) + 'px';
+//             this.style.left = (e.clientX - this.dragStartX) + 'px';
+//             this.style.top = (e.clientY - this.dragStartY) + 'px';
 
-        }.bind(self);
+//         }.bind(self);
 
-        var mouseup = function(e) { // document mouseup
+//         var mouseup = function(e) { // document mouseup
 
-            document.removeEventListener('mousemove', mousemove);
-            document.removeEventListener('mouseup', mouseup);
+//             document.removeEventListener('mousemove', mousemove);
+//             document.removeEventListener('mouseup', mouseup);
 
-        }.bind(self);
+//         }.bind(self);
 
-        ele.addEventListener('mousedown', function(e) { // element mousedown
+//         ele.addEventListener('mousedown', function(e) { // element mousedown
 
-            self.dragStartX = e.offsetX;
-            self.dragStartY = e.offsetY;
+//             self.dragStartX = e.offsetX;
+//             self.dragStartY = e.offsetY;
 
-            document.addEventListener('mousemove', mousemove);
-            document.addEventListener('mouseup', mouseup);
+//             document.addEventListener('mousemove', mousemove);
+//             document.addEventListener('mouseup', mouseup);
 
-        }.bind(self));
+//         }.bind(self));
 
-        self.style.color = 'green';
-        self.classList.remove('inline-wiktionary-new');
+//         self.style.color = 'green';
+//         self.classList.remove('inline-wiktionary-new');
 
-    }
-    // remove new class from news
+//     }
+//     // remove new class from news
 
-    // self.style.position = 'absolute' // fixed might work as well
+//     // self.style.position = 'absolute' // fixed might work as well
 
-}
+// }
 
 // // https://stackoverflow.com/questions/24641592/injecting-iframe-into-page-with-restrictive-content-security-policy
 // Avoid recursive frame insertion...
@@ -80,11 +80,17 @@ function createIframe(word, lang) {
         // '#mw-panel { display: none; }';
 
         div.style.cssText = 'position:fixed; ' +
-            'top:30px; left: 50%; border: solid black; background-color: white;' +
+            'top:30px; left: 50%; border: solid black; ' +
             'width:400px;height:calc(80% - 20px);z-index:99999;' +
             'display: flex;' +
-            'flex-direction: column; align-items: flex-end;';
+            'flex-direction: column; align-items: flex-end;' +
+            'resize: both;' +
+            'overflow: auto;' +
+            'background-color: transparent;';
         div.classList.add('inline-wiktionary');
+
+        // make div background transparent
+
 
         var X = document.createElement('span');
         // X.style.cssText = '';
@@ -95,7 +101,8 @@ function createIframe(word, lang) {
             "color: black; " +
             "cursor: pointer; " +
             "float: right; " +
-            "margin-right: 10px";
+            "margin-right: 10px;" +
+            "direction: ltr;";
         X.classList.add('inline-wiktionary-X');
         X.innerHTML = 'X';
         X.onclick = function() {
@@ -103,22 +110,34 @@ function createIframe(word, lang) {
             // delete div
             div.parentNode.removeChild(div);
         };
-        // add X
-        div.appendChild(X);
-        div.appendChild(iframe);
+        var Xdiv = document.createElement('div'); // this is also the move zone
+        Xdiv.style.cssText = 'flex-grow: 0; ' +
+            'width: 100%; ' +
+            'display: flex; ' +
+            'justify-content: flex-end; ' +
+            'align-items: center; ' +
+            'cursor: move; ' +
+            'background-color: white;';
 
+        Xdiv.appendChild(X);
+        div.appendChild(Xdiv);
+
+        // add X
+        // div.appendChild(X);
+
+        var idiv = document.createElement('div');
+        idiv.style.cssText =
+            'direction: rtl;' +
+            'flex-grow: 1;' +
+            'width: 100%;' +
+            'display: flex';
+        idiv.appendChild(iframe);
+        div.appendChild(idiv);
         document.body.appendChild(div);
 
 
         console.log('Inline Wiktionary loaded!');
         var mousemove = function(e) { // document mousemove
-
-            // cancel event if it was the X that was clicked
-            if (e.target.classList.contains('inline-wiktionary-X')) {
-                e.stopPropagation();
-                e.preventDefault();
-                return;
-            }
 
             this.style.left = (e.clientX - this.dragStartX) + 'px';
             this.style.top = (e.clientY - this.dragStartY) + 'px';
@@ -129,25 +148,21 @@ function createIframe(word, lang) {
 
         var mouseup = function(e) { // document mouseup
 
-            // cancel event if it was the X that was clicked
-            if (e.target.classList.contains('inline-wiktionary-X')) {
-                e.stopPropagation();
-                e.preventDefault();
-                return;
-            }
+            // remove our event listeners
             document.removeEventListener('mousemove', mousemove);
             document.removeEventListener('mouseup', mouseup);
+
             // console.log('mouseup');
 
 
 
         }.bind(div);
 
-        div.addEventListener('mousedown', function(e) { // element mousedown
+        Xdiv.addEventListener('mousedown', function(e) { // element mousedown
 
-            // cancel event if it was the X that was clicked
+            // don't let it move if cancel event if it was the X that was clicked
             if (e.target.classList.contains('inline-wiktionary-X')) {
-                e.stopPropagation();
+                // e.stopPropagation();
                 e.preventDefault();
                 return;
             }
@@ -156,11 +171,19 @@ function createIframe(word, lang) {
 
             document.addEventListener('mousemove', mousemove);
             document.addEventListener('mouseup', mouseup);
-            // console.log('mousedown');
+
+            // the trouble with the moving is that if the user moves the mouse too fast and the cursor
+            // enters the iframe, the div no longer receives mousemove events. 
+            // But if I'm understanding this correctly, 
+            // we can't do that because of SecurityError (cross-origin stuff)
+
+
+            console.log('mousedown');
 
 
 
         }.bind(div));
+
 
         return word; //+" "+ iframe.src;
     }
