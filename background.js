@@ -61,6 +61,9 @@ let color = '#3aa757';
 // Avoid recursive frame insertion...
 var lang = 'Spanish';
 
+// apparently, functions from background.js are exempt from CORS
+// https://stackoverflow.com/questions/55214828/cross-origin-request-in-a-content-script-is-blocked-by-corb-despite-the-correct/55292071#55292071
+// therefore, I can create a refresh button that calls this function whenever some CORS issue pops up
 function createIframe(word, lang) {
     var extensionOrigin = 'chrome-extension://' + chrome.runtime.id;
 
@@ -86,7 +89,7 @@ function createIframe(word, lang) {
             'flex-direction: column; align-items: flex-end;' +
             'resize: both;' +
             'overflow: auto;' +
-            'background-color: transparent;';
+            'background-color: white;';
         div.classList.add('inline-wiktionary');
 
         // make div background transparent
@@ -127,7 +130,7 @@ function createIframe(word, lang) {
 
         var idiv = document.createElement('div');
         idiv.style.cssText =
-            'direction: rtl;' +
+            // 'direction: rtl;' +
             'flex-grow: 1;' +
             'width: 100%;' +
             'display: flex';

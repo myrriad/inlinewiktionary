@@ -6,11 +6,13 @@
 </head>
 
 <body>
-    <span>Delete all inline wiktionary tabs</span>
-    <button id="deleteTabs">X</button>
-    <div>
-        <p>Choose a different default language.</p>
-        <input type="text" id="lang-input" name="lang-input" value="">
+    <div id="delete-tabs-div">
+        <span>Delete all inline wiktionary tabs: </span>
+        <button id="delete-tabs">X</button>
+    </div>
+    <div id="default-jump-div">
+        <p>Choose default language to try to jump to:</p>
+        <input type="text" id="lang-input" name="lang-input" value="" placeholder="Insert default language here">
         <input type="submit" id="lang-submit" value="submit">
     </div>
     <div id="synced"></div>

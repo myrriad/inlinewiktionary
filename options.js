@@ -1,6 +1,6 @@
 // ---START dropdown.js---
 // Initialize button with user's preferred color
-let deleteButton = document.getElementById("deleteTabs");
+let deleteButton = document.getElementById("delete-tabs");
 
 // chrome.storage.sync.get("color", ({ color }) => {
 // changeColor.style.backgroundColor = color;
@@ -89,13 +89,15 @@ function constructOptions(buttonColors) {
 
 async function langSubmit() { // https://stackoverflow.com/questions/50203816/how-to-reload-background-scripts
     let lang = encodeURIComponent(document.getElementById("lang-input").value);
+    if (!lang) lang = ''; // default
+
     chrome.storage.sync.set({ lang: lang });
     console.log("lang set to " + lang);
     let out = document.getElementById('synced');
 
     // let [tab] = await chrome.tabs.query({ active: true, currentWindow: true }); // { active: true, lastFocusedWindow: true };
     chrome.runtime.sendMessage({ lang: lang }); // send message options.js -> background.js
-    out.innerText = "Synced, sent!";
+    out.innerText = "Language saved!";
 
 }
 
@@ -105,5 +107,7 @@ h.addEventListener('click', langSubmit);
 
 chrome.storage.sync.get("lang", (data) => {
     let lang = data.lang;
-    document.getElementById("lang-input").value = lang;
+    if (lang !== undefined) {
+        document.getElementById("lang-input").value = lang;
+    }
 });
