@@ -77,7 +77,8 @@ function createIframe(word, lang) {
         iframe.src = "https://en.m.wiktionary.org/wiki/" + encodeURIComponent(word) + '#' + lang;
 
         // var cursor =
-        iframe.style.cssText = 'z-index:999999; flex-grow: 1; width: 100%'; // calc(100% - 3px);'; // top:0;left:0;display:block;' +
+        var iframeCSS = 'z-index:999999; flex-grow: 1; width: 100%';
+        iframe.style.cssText = iframeCSS; // calc(100% - 3px);'; // top:0;left:0;display:block;' +
         // transform: translateX(-50%);'
         // +
         // '#mw-panel { display: none; }';
@@ -93,7 +94,14 @@ function createIframe(word, lang) {
         div.classList.add('inline-wiktionary');
 
         // make div background transparent
-
+        var Xdiv = document.createElement('div'); // this is also the move zone
+        Xdiv.style.cssText = 'flex-grow: 0; ' +
+            'width: 100%; ' +
+            'display: flex; ' +
+            'justify-content: space-between; ' +
+            'align-items: center; ' +
+            'cursor: move; ' +
+            'background-color: white;';
 
         var X = document.createElement('span');
         // X.style.cssText = '';
@@ -113,16 +121,36 @@ function createIframe(word, lang) {
             // delete div
             div.parentNode.removeChild(div);
         };
-        var Xdiv = document.createElement('div'); // this is also the move zone
-        Xdiv.style.cssText = 'flex-grow: 0; ' +
-            'width: 100%; ' +
-            'display: flex; ' +
-            'justify-content: flex-end; ' +
-            'align-items: center; ' +
-            'cursor: move; ' +
-            'background-color: white;';
 
+
+        var refresh = document.createElement('span');
+        refresh.style.cssText = 'float: left; ' +
+            'margin-left: 10px; ' +
+            'cursor: pointer; ';
+        refresh.innerHTML = '↻';
+        refresh.classList.add('inline-wiktionary-refresh');
+
+        // 
+        function reframe() {
+            console.log("inline-wikt reframe");
+            //recreate iframe
+            var urlprev = iframe.src;
+            var parentNode = iframe.parentNode;
+            parentNode.removeChild(iframe);
+            iframe = document.createElement('iframe');
+            iframe.src = urlprev;
+            iframe.style.cssText = iframeCSS;
+
+            parentNode.appendChild(iframe);
+        }
+        refresh.onclick = reframe;
+        // iframe.setAttribute('onload', 'reframe()');
+
+        // reframe on iframe onload
+
+        Xdiv.appendChild(refresh);
         Xdiv.appendChild(X);
+
         div.appendChild(Xdiv);
 
         // add X
@@ -164,7 +192,7 @@ function createIframe(word, lang) {
         Xdiv.addEventListener('mousedown', function(e) { // element mousedown
 
             // don't let it move if cancel event if it was the X that was clicked
-            if (e.target.classList.contains('inline-wiktionary-X')) {
+            if (e.target.classList.contains('inline-wiktionary-X') || e.target.classList.contains('inline-wiktionary-refresh')) {
                 // e.stopPropagation();
                 e.preventDefault();
                 return;
